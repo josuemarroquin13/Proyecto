@@ -22,5 +22,5 @@ Dashboard Web (dashboard.html): Interfaz de monitoreo remoto suscrita a los tóp
 ENLACE AL PROYECTO EN WOKWI:
 https://wokwi.com/projects/480260152782420993
 
-ENLACE A MQTT WEBSOCKET:
+ENLACE A MQTT WEBSOCKET UTILIZADO:
 https://www.hivemq.com/demos/websocket-client/
