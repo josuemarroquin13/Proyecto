@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartPark IoT - Dashboard</title>
+  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      /* Cambia "fondo.jpg" por el nombre exacto de tu imagen de fondo */
+      background-image: linear-gradient(rgba(17, 24, 39, 0.78), rgba(17, 24, 39, 0.85)), url("fondo.jpg");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      background-color: #111827; /* Color de respaldo si la imagen no carga */
+      color: #f9fafb;
+      margin: 0;
+      padding: 24px;
+      min-height: 100vh;
+    }
+    .header {
+      max-width: 900px;
+      margin: 0 auto 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .brand img {
+      width: 52px;
+      height: 52px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 1px solid #374151;
+    }
+    .status {
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-weight: bold;
+      background: #dc2626;
+      color: #fff;
+    }
+    .status.connected {
+      background: #16a34a;
+    }
+    .grid {
+      max-width: 900px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      background: rgba(31, 41, 55, 0.85);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(75, 85, 99, 0.6);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .label {
+      color: #d1d5db;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+    .value {
+      font-size: 28px;
+      font-weight: bold;
+    }
+    .libre { color: #22c55e; }
+    .ocupado { color: #ef4444; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="brand">
+      <!-- Cambia "logo.png" por el nombre exacto de tu logotipo (o borra esta línea si no usarás logo) -->
+      <img src="logo.png" alt="Logo SmartPark" />
+      <h1>SmartPark - Monitoreo en Vivo</h1>
+    </div>
+    <div id="connStatus" class="status">Desconectado</div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="label">Plazas Libres</div>
+      <div id="plazas" class="value">--</div>
+    </div>
+    <div class="card">
+      <div class="label">Cajón 1</div>
+      <div id="cajon1" class="value">--</div>
+    </div>
+    <div class="card">
+      <div class="label">Cajón 2</div>
+      <div id="cajon2" class="value">--</div>
+    </div>
+    <div class="card">
+      <div class="label">Barrera de Acceso</div>
+      <div id="barrera" class="value">--</div>
+    </div>
+  </div>
+
+  <script>
+    const statusEl = document.getElementById("connStatus");
+    const plazasEl = document.getElementById("plazas");
+    const cajon1El = document.getElementById("cajon1");
+    const cajon2El = document.getElementById("cajon2");
+    const barreraEl = document.getElementById("barrera");
+
+    // Conexión por WebSockets al mismo broker público de HiveMQ
+    const client = mqtt.connect("wss://broker.hivemq.com:8884/mqtt");
+
+    client.on("connect", () => {
+      statusEl.textContent = "Conectado a MQTT";
+      statusEl.classList.add("connected");
+      client.subscribe("smartpark/#");
+    });
+
+    client.on("offline", () => {
+      statusEl.textContent = "Sin conexión";
+      statusEl.classList.remove("connected");
+    });
+
+    function actualizarEstadoVisual(el, texto) {
+      el.textContent = texto;
+      el.classList.remove("libre", "ocupado");
+      if (texto.toLowerCase() === "libre") {
+        el.classList.add("libre");
+      } else if (texto.toLowerCase() === "ocupado") {
+        el.classList.add("ocupado");
+      }
+    }
+
+    client.on("message", (topic, message) => {
+      const valor = message.toString().trim();
+
+      if (topic === "smartpark/plazas") {
+        plazasEl.textContent = valor;
+        const libres = parseInt(valor, 10);
+        if (!isNaN(libres)) {
+          barreraEl.textContent = libres > 0 ? "Abierta" : "Cerrada";
+        }
+      } else if (topic === "smartpark/cajon1") {
+        actualizarEstadoVisual(cajon1El, valor);
+      } else if (topic === "smartpark/cajon2") {
+        actualizarEstadoVisual(cajon2El, valor);
+      }
+    });
+  </script>
+</body>
+</html>
