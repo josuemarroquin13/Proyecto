@@ -17,3 +17,10 @@ Pantalla LCD 16x2 con módulo I2C: Interfaz visual local en la entrada del estac
 Broker MQTT (broker.hivemq.com): Intermediario de mensajería en la nube que recibe y distribuye los datos publicados por el ESP32 a través de los tópicos smartpark/cajon1, smartpark/cajon2 y smartpark/plazas.
 
 Dashboard Web (dashboard.html): Interfaz de monitoreo remoto suscrita a los tópicos MQTT que visualiza en tiempo real el estado individual de cada cajón, el conteo de plazas libres, el estado de la barrera, el historial de ocupación y el registro de eventos.
+
+
+ENLACE AL PROYECTO EN WOKWI:
+https://wokwi.com/projects/480260152782420993
+
+ENLACE A MQTT WEBSOCKET:
+https://www.hivemq.com/demos/websocket-client/
