@@ -1,6 +1,7 @@
 # Proyecto
 Poyecto SmartPark
-SmartPark IoT — Sistema de Monitoreo y Control de Estacionamiento
+SmartPark IoT 
+Sistema de Monitoreo y Control de Estacionamiento
 
 Prototipo IoT desarrollado y simulado en Wokwi que automatiza el control de acceso y monitorea en tiempo real la disponibilidad de plazas de estacionamiento mediante telemetría MQTT.
 
